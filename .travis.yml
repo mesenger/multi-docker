@@ -21,3 +21,4 @@ after_success:
   - docker push mesenger/multi-nginx
   - docker push mesenger/multi-server
   - docker push mesenger/multi-worker
+
