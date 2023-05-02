@@ -1,0 +1,23 @@
+sudo: required
+language: generic
+services:
+  - docker
+
+before_install:
+  - docker build -t mesenger/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true mesenger/react-test npm test
+
+after_success:
+  - docker build -t mesenger/multi-client ./client
+  - docker build -t mesenger/multi-nginx ./nginx
+  - docker build -t mesenger/multi-server ./server
+  - docker build -t mesenger/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Push images to docker hub
+  - docker push mesenger/multi-client
+  - docker push mesenger/multi-nginx
+  - docker push mesenger/multi-server
+  - docker push mesenger/multi-worker
